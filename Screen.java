@@ -21,6 +21,7 @@ public class Screen {
     static JButton[] boxes = {one, two, three, four, five, six, seven, eight, nine};
 
     static boolean win = false;
+    static boolean lose = false;
 
     public static void main(String[] args) {
         int i;
@@ -35,8 +36,18 @@ public class Screen {
                         addBoxes();
                         panel.revalidate();
                         panel.repaint();
-                        opponentTurn();
                         checkTeamWin();
+                        if (!win) {
+                            opponentTurn();
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                null, 
+                                "You win!", 
+                                "Victory", 
+                                JOptionPane.INFORMATION_MESSAGE
+                            );
+                            win = false;
+                        }
                     }
                 }
             };
@@ -65,7 +76,6 @@ public class Screen {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) { System.err.print(e); }
-        checkTeamWin(); 
 
         int i;
         boolean canTurn = false;
@@ -85,6 +95,15 @@ public class Screen {
             );
             win = false;
 
+        } else if (lose) {
+            JOptionPane.showMessageDialog(
+                null,
+                "You lose!",
+                "Loss",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            lose = false;
+
         } else if (canTurn) {
             boolean isFree = false;
             int randomNum = 0;
@@ -100,6 +119,11 @@ public class Screen {
             panel.revalidate();
             panel.repaint();
 
+            checkOpponentWin();
+            if (lose) {
+                JOptionPane.showMessageDialog(null, "You lose!", "Loss", JOptionPane.INFORMATION_MESSAGE);
+                lose = false;
+            }
         } else {
             JOptionPane.showMessageDialog(
                 null, 
@@ -107,9 +131,19 @@ public class Screen {
                 "Board Full", 
                 JOptionPane.INFORMATION_MESSAGE
             );
-
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) { System.err.print(e); }
+                for (i = 0; i < boxes.length; i++) {
+                    boxes[i].setText("");
+                    panel.removeAll();
+                    addBoxes();
+                    panel.revalidate();
+                    panel.repaint();
+                }
         }
     }
+
 
     static void checkTeamWin() {
         boolean isWin = false;
@@ -139,6 +173,9 @@ public class Screen {
             }
         }
         if (isWin) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) { System.err.print(e); }
             for (i = 0; i < boxes.length; i++) {
                 boxes[i].setText("");
                 panel.removeAll();
@@ -149,5 +186,45 @@ public class Screen {
         }
     }
 
+    static void checkOpponentWin() {
+        boolean isWin = false;
+        int i;
+        for (i = 0; i < boxes.length; i++) {
+            if (boxes[i].getText().equals("O")) {
+                if ((i == 0 || i == 3 || i == 6) && boxes[i + 1].getText().equals("O") && boxes[i + 2].getText().equals("O")) {
+                    isWin = true;
+                    lose = true;
+                    break;
+                }
+                if (i == 2 && boxes[i + 2].getText().equals("O") && boxes[i + 4].getText().equals("O")) {
+                    isWin = true;
+                    lose = true;
+                    break;
+                }
+                if (i == 0 && boxes[i + 4].getText().equals("O") && boxes[i + 8].getText().equals("O")) {
+                    isWin = true;
+                    lose = true;
+                    break;
+                }
+                if (i < 3 && boxes[i + 3].getText().equals("O") && boxes[i + 6].getText().equals("O")) {
+                    isWin = true;
+                    lose = true;
+                    break;
+                }
+            }
+        }
+        if (isWin) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) { System.err.print(e); }
+            for (i = 0; i < boxes.length; i++) {
+                boxes[i].setText("");
+                panel.removeAll();
+                addBoxes();
+                panel.revalidate();
+                panel.repaint();
+            }
+        }
+    }
 
 }
